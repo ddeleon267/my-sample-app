@@ -1,56 +1,88 @@
 class PostsController < ApplicationController
  
     get '/posts' do
-        binding.pry
-        @posts = Post.all
-        erb :'posts/index'
+        if logged_in?
+            @posts = current_user.posts
+            erb :'posts/index'
+        else
+            redirect '/login'
+        end
     end
 
     get '/posts/new' do
-        @users = User.all
-        erb :'/posts/new'
+        if logged_in?
+            erb :'/posts/new'
+        else
+            redirect '/login'
+        end
     end
 
     post '/posts' do
-        user = User.find_by_id(params[:user_id])
-        post = user.posts.build(params)
-        binding.pry
-        if post.save
-            redirect '/posts'
+        if logged_in?
+            post = current_user.posts.build(params)
+            if post.save
+                redirect '/posts'
+            else
+                redirect '/posts/new'
+            end
         else
-            redirect '/posts/new'
+            redirect '/login'
         end
     end
 
     get '/posts/:id' do
-        @post = Post.find_by_id(params[:id])
-        if @post 
-            erb :'/posts/show'
+        if logged_in?
+            @post = current_user.posts.find_by_id(params[:id])
+            if @post 
+                erb :'/posts/show'
+            else
+                redirect '/posts'
+            end
         else
-            redirect '/posts'
+            redirect '/login'
         end
     end
 
     get '/posts/:id/edit' do
-        @post = Post.find_by_id(params[:id])
-        erb :'/posts/edit'
+        if logged_in?
+            @post = current_user.posts.find_by_id(params[:id])
+            if @post
+                erb :'/posts/edit'
+            else
+                redirect '/posts'
+            end
+        else
+            redirect '/login'
+        end
     end
     
     patch '/posts/:id' do
-        post = Post.find_by_id(params[:id])
-        if post.update(title: params[:title], body: params[:body])
-            redirect "/posts/#{post.id}"
+        if logged_in?
+            post = current_user.posts.find_by_id(params[:id])
+            if post
+                if post.update(title: params[:title], body: params[:body])
+                    redirect "/posts/#{post.id}"
+                else
+                    redirect "/posts/#{post}/edit"
+                end
+            else
+                redirect '/posts'
+            end
         else
-            redirect "/posts/#{post}/edit"
+            redirect 'login'
         end
     end
 
     delete '/posts/:id' do
-        post = Post.find_by_id(params[:id])
-        if post
-            post.delete
+        if logged_in?
+            post = Post.find_by_id(params[:id])
+            if post
+                post.delete
+            end
+            redirect '/posts'
+        else
+            redirect '/login'
         end
-        redirect '/posts'
     end
 
 

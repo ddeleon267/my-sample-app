@@ -1,21 +1,12 @@
 <h2>Add a Post!</h2>
 <br>
 <form method="post" action="/posts">
-    <label>Select User:</label>
-    <select name="user_id">
-        <% @users.each do |user| %>
-            <option value="<%= user.id %>"><%= user.name %></option>
-        <% end %>
-    </select>
-        <br>
         <label>Title:</label>
         <input type="text" name="title">
         <br>
         <textarea name="body"></textarea>
         <br>
         <input type="submit">
-    
-
 </form>
 
 
