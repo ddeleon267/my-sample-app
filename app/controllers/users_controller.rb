@@ -8,9 +8,8 @@ class UsersController < ApplicationController
         if user.save
             session[:user_id] = user.id
             redirect '/posts' 
-        else
-            redirect '/signup'
         end
+        redirect '/signup'
     end
 
 end

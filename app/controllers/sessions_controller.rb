@@ -9,9 +9,8 @@ class SessionsController < ApplicationController
         if user && user.authenticate(params[:password])
             session[:user_id] = user.id
             redirect '/posts'
-        else
-            redirect '/login'
         end
+        redirect '/login'
     end
 
     get '/logout' do
